@@ -68,3 +68,19 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Added Tailwind CSS to the project
+
+### `npm install -D tailwindcss@3.4.10`
+The command above installs the latest version of Tailwind CSS because the version you installed is not compatible with the version of Create React App you are using.
+### `npx tailwindcss init -p`
+The command above initializes Tailwind CSS in the project.
+### `npm install -D postcss-cli`
+The command above installs the PostCSS CLI because the version you installed is not compatible with the version of Create React App you are using.
+### `npm install -D postcss-import`
+The command above installs the PostCSS Import plugin because the version you installed is not compatible with the version of Create React App you are using.
+### `npm install -D postcss-url`
+The command above installs the PostCSS URL plugin because the version you installed is not compatible with the version of Create React App you are using.
+###
+
+
