@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '../components/common/Sidebar'; // Asegúrate de que la ruta sea correcta
 import { motion } from 'framer-motion';
 
-function CreateTicket() {
+function Knowledgebase() {
     return (
         <Layout>
             <motion.h2
@@ -24,4 +24,4 @@ function CreateTicket() {
     )
 }
 
-export default CreateTicket;
+export default Knowledgebase;

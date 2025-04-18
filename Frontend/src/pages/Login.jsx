@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom'; // Importa Link y useNavigate
 import '../styles/global.css';
 
 function Login() {
     // Estado para almacenar los valores del formulario
+     const { login } = useAuth();
     const [formData, setFormData] = useState({
         emailOrUsername: '',
         password: ''
@@ -38,7 +40,7 @@ function Login() {
 
         // --- Aquí iría la lógica para enviar los datos al backend ---
          try {
-           const response = await fetch('/api/login', { // Reemplaza con tu endpoint real
+           const response = await fetch('http://localhost:3001/auth/login', { 
              method: 'POST',
              headers: {
                'Content-Type': 'application/json',
@@ -49,26 +51,29 @@ function Login() {
            const result = await response.json();
         
            if (!response.ok) {
-             // Si la API devuelve un error específico, muéstralo
-             throw new Error(result.message || 'Error al iniciar sesión');
-           }
+            // Use the message from the backend if available, otherwise a generic error
+            throw new Error(result.message || `Error ${response.status}: ${response.statusText}`);
+        }
         
            // Éxito: Guarda el token/session, redirige, etc.
-           console.log('Login exitoso:', result);
+           console.log('Login exitoso:', result.access_token);
+           login(result.access_token);
+
+
+               // Llama a la función de login del contexto
+
+           alert(`Login Exitoso para ${result.user?.username || 'usuario'}`); // Muestra un mensaje de éxito (opcional)
            // Ejemplo de redirección a un dashboard:
            // localStorage.setItem('token', result.token); // Guarda el token si usas JWT
            // navigate('/dashboard');
-        
+           navigate('/dashboard');
          } catch (err) {
            console.error('Error en el login:', err);
            setError(err.message || 'Ocurrió un error. Inténtalo de nuevo.');
          }
-        // --- Fin de la lógica de envío (actualmente comentada) ---
-
-        // Simulación temporal (quitar cuando implementes el backend)
-        alert(`Simulación de envío:\nUsuario/Correo: ${formData.emailOrUsername}\nContraseña: ${formData.password}`);
-        // Podrías redirigir aquí temporalmente si quieres
-         navigate('/dashboard');
+   
+        // --- Fin de la lógica de envío ---
+        
     };
 
     return (
