@@ -3,13 +3,3 @@
 @tailwind utilities;
 
 /* Reglas globales personalizadas */
-html, body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Inter', sans-serif; /* Ejemplo de fuente */
-}
-
-* {
-  box-sizing: inherit;
-}
