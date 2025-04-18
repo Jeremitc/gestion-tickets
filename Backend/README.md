@@ -96,3 +96,23 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Added librarys
+
+```bash
+$ npm install @nestjs/typeorm typeorm
+$ npm install mysql2
+$ npm install @nestjs/config class-validator class-transformer bcrypt
+$ npm install @nestjs/jwt
+$ npm install --save-dev @types/bcrypt
+```
+
+## How to generate random TOKEN JWT
+```bash
+$ node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
+```
+
+## Install SWAGGER that is used for documentation in this project 
+```bash
+$ npm install @nestjs/swagger swagger-ui-express
+```

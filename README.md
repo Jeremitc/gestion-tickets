@@ -1,8 +1,6 @@
-# PROJECTO GESTION TICKETS JEREMI 
-
-
+# PROJECTO DUEÑO JEREMI
 
 ## Modelo del projecto
--Frontend esta hecho en React Vanilla Puro , es un projecto independiente al Backend
+-Frontend esta hecho en React Vanilla Puro 
 
--Backend esta hecho en Nest JS , es un projecto independiente al Frontend
+-Backend esta hecho Nest JS
