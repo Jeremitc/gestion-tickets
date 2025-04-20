@@ -116,3 +116,8 @@ $ node -e "console.log(require('crypto').randomBytes(64).toString('base64'))"
 ```bash
 $ npm install @nestjs/swagger swagger-ui-express
 ```
+
+## Install API GOOGLE AI
+```bash
+$ npm install @google/generative-ai
+```

@@ -81,6 +81,8 @@ The command above installs the PostCSS CLI because the version you installed is 
 The command above installs the PostCSS Import plugin because the version you installed is not compatible with the version of Create React App you are using.
 ### `npm install -D postcss-url`
 The command above installs the PostCSS URL plugin because the version you installed is not compatible with the version of Create React App you are using.
-###
+### `npm install @google/generative-ai`
+The command above installs the Google Generative AI client because the version you installed is not compatible with the version of Create React App you are using.
 
-
+### `npm installreact-markdown`
+The command above installs the React Markdown library because the version you installed is not compatible with the version of Create React App you are using.

@@ -1,6 +1,8 @@
+// schema.prisma
+
 generator client {
   provider = "prisma-client-js"
-  //output   = "../generated/prisma"  <-- Comentada prueba error
+  // output   = "./node_modules/.prisma/client"
 }
 
 datasource db {
@@ -16,5 +18,48 @@ model User {
   created_at    DateTime? @default(now()) @db.Timestamp(0)
   updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(0)
 
+  // Relación con las conversaciones: Un usuario puede tener muchas conversaciones
+  conversations Conversation[] // <-- NUEVA RELACIÓN
+
+  // chatMessages ChatMessage[] // <-- ELIMINADA relación directa con mensajes
+
   @@map("users")
 }
+
+// --- NUEVO MODELO PARA CONVERSACIONES ---
+model Conversation {
+  id        Int       @id @default(autoincrement())
+  title     String?   @db.VarChar(150) // Título opcional (p.ej., primer mensaje)
+  createdAt DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt DateTime  @updatedAt @db.Timestamp(0) // Se actualiza con cada mensaje nuevo
+
+  // Relación con el usuario: Cada conversación pertenece a UN usuario
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade) // Si se borra el usuario, se borran sus conversaciones
+
+  // Relación con los mensajes: Una conversación tiene muchos mensajes
+  messages  ChatMessage[]
+
+  @@index([userId, updatedAt]) // Índice para buscar rápido las conversaciones de un usuario, ordenadas por actividad
+  @@map("conversations")
+}
+// --------------------------------------
+
+// --- MODELO ChatMessage MODIFICADO ---
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  role      String   @db.VarChar(10) // 'user' o 'assistant'
+  content   String   @db.Text
+  timestamp DateTime @default(now()) @db.Timestamp(0) // Mantenemos el nombre por consistencia
+
+  // Relación con la conversación: Cada mensaje pertenece a UNA conversación
+  conversationId Int
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade) // Si se borra la conversación, se borran sus mensajes
+
+  // userId Int      // <-- ELIMINADO (se accede vía conversation.userId)
+  // user   User...  // <-- ELIMINADO
+
+  @@index([conversationId, timestamp]) // Índice para buscar rápido mensajes de una conversación, ordenados por tiempo
+  @@map("chat_messages")
+}
+// -----------------------------------

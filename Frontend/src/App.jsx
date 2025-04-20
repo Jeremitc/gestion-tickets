@@ -27,6 +27,7 @@ function App() {
       <Route path="/CreateTicket" element={<CreateTicket />} />
       <Route path="/Settings" element={<Settings />} />
       <Route path="/VirtualAssistent" element={<VirtualAssistent />} />
+      <Route path="/VirtualAssistent/chat/:conversationId" element={<VirtualAssistent />} />
       <Route path="/Knowledgebase" element={<Knowledgebase />} />
       <Route path="/TicketList" element={<TicketList />} />
       <Route path="*" element={<NotFound />} />
