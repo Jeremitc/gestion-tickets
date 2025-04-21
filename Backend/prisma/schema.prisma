@@ -2,7 +2,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  // output   = "./node_modules/.prisma/client"
 }
 
 datasource db {
@@ -11,55 +10,129 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  username      String?   @unique(map: "username") @db.VarChar(50)
-  email         String    @unique(map: "email") @db.VarChar(100)
-  password_hash String    @db.VarChar(255)
-  created_at    DateTime? @default(now()) @db.Timestamp(0)
-  updated_at    DateTime? @default(now()) @updatedAt @db.Timestamp(0)
+  id              Int            @id @default(autoincrement())
+  username        String?        @unique(map: "username") @db.VarChar(50)
+  email           String         @unique(map: "email") @db.VarChar(100)
+  password_hash   String         @db.VarChar(255)
+  role            String         @default("client") @db.VarChar(20)
+  isActive        Boolean        @default(true) // Nuevo campo: "client", "support", "admin"
+  created_at      DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at      DateTime?      @default(now()) @updatedAt @db.Timestamp(0)
+  
 
-  // Relación con las conversaciones: Un usuario puede tener muchas conversaciones
-  conversations Conversation[] // <-- NUEVA RELACIÓN
+  // Relaciones existentes
+  conversations   Conversation[]
 
-  // chatMessages ChatMessage[] // <-- ELIMINADA relación directa con mensajes
+  // Nuevas relaciones con tickets
+  ticketsCreated  Ticket[]       @relation("CreatedTickets")
+  ticketsAssigned Ticket[]       @relation("AssignedTickets")
+  comments        Comment[]
 
   @@map("users")
 }
 
-// --- NUEVO MODELO PARA CONVERSACIONES ---
 model Conversation {
-  id        Int       @id @default(autoincrement())
-  title     String?   @db.VarChar(150) // Título opcional (p.ej., primer mensaje)
-  createdAt DateTime  @default(now()) @db.Timestamp(0)
-  updatedAt DateTime  @updatedAt @db.Timestamp(0) // Se actualiza con cada mensaje nuevo
+  id         Int           @id @default(autoincrement())
+  title      String?       @db.VarChar(150)
+  createdAt  DateTime      @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime      @updatedAt @db.Timestamp(0)
+  userId     Int
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages   ChatMessage[]
 
-  // Relación con el usuario: Cada conversación pertenece a UN usuario
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade) // Si se borra el usuario, se borran sus conversaciones
-
-  // Relación con los mensajes: Una conversación tiene muchos mensajes
-  messages  ChatMessage[]
-
-  @@index([userId, updatedAt]) // Índice para buscar rápido las conversaciones de un usuario, ordenadas por actividad
+  @@index([userId, updatedAt])
   @@map("conversations")
 }
-// --------------------------------------
 
-// --- MODELO ChatMessage MODIFICADO ---
 model ChatMessage {
-  id        Int      @id @default(autoincrement())
-  role      String   @db.VarChar(10) // 'user' o 'assistant'
-  content   String   @db.Text
-  timestamp DateTime @default(now()) @db.Timestamp(0) // Mantenemos el nombre por consistencia
-
-  // Relación con la conversación: Cada mensaje pertenece a UNA conversación
+  id             Int           @id @default(autoincrement())
+  role           String        @db.VarChar(10)
+  content        String        @db.Text
+  timestamp      DateTime      @default(now()) @db.Timestamp(0)
   conversationId Int
-  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade) // Si se borra la conversación, se borran sus mensajes
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
-  // userId Int      // <-- ELIMINADO (se accede vía conversation.userId)
-  // user   User...  // <-- ELIMINADO
-
-  @@index([conversationId, timestamp]) // Índice para buscar rápido mensajes de una conversación, ordenados por tiempo
+  @@index([conversationId, timestamp])
   @@map("chat_messages")
 }
-// -----------------------------------
+
+// Modelo de Estados
+model Status {
+  id         Int           @id @default(autoincrement())
+  name       String        @unique @db.VarChar(50) // Ej. "open", "in_progress", "closed"
+  tickets    Ticket[]
+  created_at DateTime?     @default(now()) @db.Timestamp(0)
+
+  @@map("statuses")
+}
+
+// Modelo de Prioridades
+model Priority {
+  id         Int           @id @default(autoincrement())
+  name       String        @unique @db.VarChar(50) // Ej. "low", "medium", "high"
+  tickets    Ticket[]
+  created_at DateTime?     @default(now()) @db.Timestamp(0)
+
+  @@map("priorities")
+}
+
+// Modelo de Categorías
+model Category {
+  id         Int           @id @default(autoincrement())
+  name       String        @unique @db.VarChar(100) // Ej. "technical", "billing"
+  tickets    Ticket[]
+  created_at DateTime?     @default(now()) @db.Timestamp(0)
+
+  @@map("categories")
+}
+
+// Modelo de Tickets
+model Ticket {
+  id             Int           @id @default(autoincrement())
+  title          String        @db.VarChar(150)
+  description    String        @db.Text
+  statusId       Int
+  status         Status        @relation(fields: [statusId], references: [id], onDelete: Restrict)
+  priorityId     Int
+  priority       Priority      @relation(fields: [priorityId], references: [id], onDelete: Restrict)
+  categoryId     Int
+  category       Category      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  creatorId      Int
+  creator        User          @relation("CreatedTickets", fields: [creatorId], references: [id], onDelete: Cascade)
+  assignedToId   Int?
+  assignedTo     User?         @relation("AssignedTickets", fields: [assignedToId], references: [id], onDelete: SetNull)
+  comments       Comment[]
+  attachments    Attachment[]
+  created_at     DateTime      @default(now()) @db.Timestamp(0)
+  updated_at     DateTime      @updatedAt @db.Timestamp(0)
+
+  @@index([creatorId, created_at])
+  @@index([assignedToId, statusId])
+  @@map("tickets")
+}
+
+// Modelo de Comentarios
+model Comment {
+  id         Int           @id @default(autoincrement())
+  content    String        @db.Text
+  ticketId   Int
+  ticket     Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  userId     Int
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  created_at DateTime      @default(now()) @db.Timestamp(0)
+
+  @@index([ticketId, created_at])
+  @@map("comments")
+}
+
+// Modelo de Archivos Adjuntos
+model Attachment {
+  id         Int           @id @default(autoincrement())
+  file_url   String        @db.VarChar(255) // URL en S3 u otro almacenamiento
+  ticketId   Int
+  ticket     Ticket        @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  created_at DateTime      @default(now()) @db.Timestamp(0)
+
+  @@index([ticketId])
+  @@map("attachments")
+}

@@ -1,12 +1,13 @@
-// src/users/user.controller.ts
-import { Controller, Patch, Body, UseGuards, Req, Get } from '@nestjs/common'; // Usar Req
+// src/users/users.controller.ts
+
+import { Controller, Patch, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { UserProfileDto } from './dto/user-profile.dto'; // Importa el DTO de respuesta
 
-@ApiTags('Users') // Tag para Swagger
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

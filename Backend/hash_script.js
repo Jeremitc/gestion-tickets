@@ -2,8 +2,8 @@
 const bcrypt = require('bcrypt');
 
 // --- ¡CAMBIA ESTA CONTRASEÑA POR LA QUE QUIERES HASHEAR! ---
-//const password = 'Miamor123'  CONTRASEÑA DE JEREMI
-const password = 'Miau123:)';  // CONTRASEÑA DE ZENAIDA
+const password = 'Miamor123'//  CONTRASEÑA DE JEREMI
+//const password = 'Miau123:)';  // CONTRASEÑA DE ZENAIDA
 // -----------------------------------------------------------
 
 const saltRounds = 10; // Número de rondas (10 es un buen valor por defecto)

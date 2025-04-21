@@ -84,5 +84,5 @@ The command above installs the PostCSS URL plugin because the version you instal
 ### `npm install @google/generative-ai`
 The command above installs the Google Generative AI client because the version you installed is not compatible with the version of Create React App you are using.
 
-### `npm installreact-markdown`
+### `npm install react-markdown`
 The command above installs the React Markdown library because the version you installed is not compatible with the version of Create React App you are using.
