@@ -1,11 +1,25 @@
 // src/users/users.controller.ts
-
-import { Controller, Patch, Body, UseGuards, Req, Get } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Body,
+  UseGuards,
+  Req,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
-import { UserProfileDto } from './dto/user-profile.dto'; // Importa el DTO de respuesta
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiBody,
+} from '@nestjs/swagger';
+import { UserProfileDto } from './dto/user-profile.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -13,20 +27,29 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Patch('me') // PATCH /users/me
-  @ApiOperation({ summary: 'Actualizar mi perfil', description: 'Actualiza username, email o contraseña del usuario autenticado.' })
-  @ApiBearerAuth('access-token') // Requiere JWT
-  @ApiBody({ type: UpdateProfileDto }) // Describe el cuerpo
-  @ApiResponse({ status: 200, description: 'Perfil actualizado.', type: UserProfileDto }) // Respuesta OK
-  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
-  @ApiResponse({ status: 401, description: 'No autorizado / Contraseña actual incorrecta.' })
-  @ApiResponse({ status: 409, description: 'Conflicto (username/email ya existe).' })
-  async updateMyProfile(@Req() req, @Body() updateProfileDto: UpdateProfileDto): Promise<UserProfileDto> {
-    const userId = req.user.id;
-    console.log(`Updating profile for user ID: ${userId}`);
-    // El servicio ya devuelve los datos con el formato UserProfileDto (sin hash)
-    return this.usersService.updateProfile(userId, updateProfileDto);
+  @Get()
+  @ApiOperation({ summary: 'Obtener lista de usuarios (solo admin)' })
+  @ApiBearerAuth('access-token')
+  @ApiResponse({ status: 200, type: [UserProfileDto] })
+  @ApiResponse({ status: 403, description: 'No autorizado (no admin).' })
+  async findAll(@Req() req): Promise<UserProfileDto[]> {
+    return this.usersService.findAll(req.user);
   }
 
-  // Si decides mover GET /profile aquí, documéntalo de forma similar a como está en AuthController
+  @UseGuards(JwtAuthGuard)
+  @Patch('me')
+  @ApiOperation({ summary: 'Actualizar mi perfil' })
+  @ApiBearerAuth('access-token')
+  @ApiBody({ type: UpdateProfileDto })
+  @ApiResponse({ status: 200, type: UserProfileDto })
+  @ApiResponse({ status: 400, description: 'Datos inválidos.' })
+  @ApiResponse({ status: 401, description: 'No autorizado.' })
+  async updateMyProfile(
+    @Req() req,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ): Promise<UserProfileDto> {
+    const userId = req.user.id;
+    console.log(`Updating profile for user ID: ${userId}`);
+    return this.usersService.updateProfile(userId, updateProfileDto);
+  }
 }

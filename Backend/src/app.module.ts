@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module'; 
 import { AssistantModule } from './assistant/assistant.module';
+import { TicketsModule } from './tickets/tickets.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AssistantModule } from './assistant/assistant.module';
     AuthModule,
     UsersModule,
     AssistantModule, 
+    TicketsModule,
   ],
   controllers: [AppController], // UserController está dentro de UsersModule
   providers: [AppService],

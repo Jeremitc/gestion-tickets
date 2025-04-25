@@ -12,6 +12,7 @@ import Knowledgebase from './pages/Knowledgebase';
 import VirtualAssistent from './pages/VirtualAsistent';
 import ProtectedRoute from './components/protected/ProtectedRoute';
 import './styles/global.css';
+import TicketDetails from './pages/TicketDetails';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
       <Route path="/VirtualAssistent/chat/:conversationId" element={<VirtualAssistent />} />
       <Route path="/Knowledgebase" element={<Knowledgebase />} />
       <Route path="/TicketList" element={<TicketList />} />
+      <Route path="/TicketDetails/:ticketId" element={<TicketDetails />} />
       <Route path="*" element={<NotFound />} />
       </Route>
       {/* Ruta no encontrada */}

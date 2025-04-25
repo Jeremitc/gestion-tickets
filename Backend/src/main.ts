@@ -36,6 +36,7 @@ async function bootstrap() {
     .addTag('Auth', 'Autenticación y Perfil')
     .addTag('Users', 'Operaciones de Usuario')
     .addTag('Assistant', 'Asistente Virtual')
+    .addTag('Tickets', 'Gestion de Tickets')
     .addBearerAuth( // Configura seguridad JWT
       {
         description: `Por favor, introduce el token JWT aquí precedido por 'Bearer '`,

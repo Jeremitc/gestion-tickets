@@ -58,20 +58,22 @@ model ChatMessage {
 
 // Modelo de Estados
 model Status {
-  id         Int           @id @default(autoincrement())
-  name       String        @unique @db.VarChar(50) // Ej. "open", "in_progress", "closed"
-  tickets    Ticket[]
-  created_at DateTime?     @default(now()) @db.Timestamp(0)
+  id                Int           @id @default(autoincrement())
+  name              String        @unique @db.VarChar(50)
+  tickets           Ticket[]
+  defaultTicketTypes TicketType[] @relation("DefaultStatus")
+  created_at        DateTime?     @default(now()) @db.Timestamp(0)
 
   @@map("statuses")
 }
 
 // Modelo de Prioridades
 model Priority {
-  id         Int           @id @default(autoincrement())
-  name       String        @unique @db.VarChar(50) // Ej. "low", "medium", "high"
-  tickets    Ticket[]
-  created_at DateTime?     @default(now()) @db.Timestamp(0)
+  id                Int           @id @default(autoincrement())
+  name              String        @unique @db.VarChar(50)
+  tickets           Ticket[]
+  defaultTicketTypes TicketType[] @relation("DefaultPriority")
+  created_at        DateTime?     @default(now()) @db.Timestamp(0)
 
   @@map("priorities")
 }
@@ -85,7 +87,19 @@ model Category {
 
   @@map("categories")
 }
+model TicketType {
+  id             Int         @id @default(autoincrement())
+  name           String      @unique @db.VarChar(50) // Ej: "Incidente", "Pregunta", "Problema", "Tarea"
+  description    String?     @db.Text
+  defaultStatusId Int?       @map("default_status_id")
+  defaultStatus  Status?     @relation("DefaultStatus", fields: [defaultStatusId], references: [id], onDelete: SetNull)
+  defaultPriorityId Int?     @map("default_priority_id")
+  defaultPriority Priority?  @relation("DefaultPriority", fields: [defaultPriorityId], references: [id], onDelete: SetNull)
+  tickets        Ticket[]
+  created_at     DateTime?   @default(now()) @db.Timestamp(0)
 
+  @@map("ticket_types")
+}
 // Modelo de Tickets
 model Ticket {
   id             Int           @id @default(autoincrement())
@@ -97,6 +111,10 @@ model Ticket {
   priority       Priority      @relation(fields: [priorityId], references: [id], onDelete: Restrict)
   categoryId     Int
   category       Category      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  // *** NUEVA RELACIÓN CON TicketType ***
+  typeId         Int           // Clave foránea
+  type           TicketType    @relation(fields: [typeId], references: [id], onDelete: Restrict) // onDelete: Restrict es seguro aquí
+  // ***********************************
   creatorId      Int
   creator        User          @relation("CreatedTickets", fields: [creatorId], references: [id], onDelete: Cascade)
   assignedToId   Int?
@@ -105,9 +123,12 @@ model Ticket {
   attachments    Attachment[]
   created_at     DateTime      @default(now()) @db.Timestamp(0)
   updated_at     DateTime      @updatedAt @db.Timestamp(0)
+  closedAt       DateTime?     @db.Timestamp(0)
+  resolutionMessage String?       @db.Text
 
   @@index([creatorId, created_at])
   @@index([assignedToId, statusId])
+  @@index([typeId]) // <-- Añadir índice para typeId
   @@map("tickets")
 }
 
@@ -120,6 +141,7 @@ model Comment {
   userId     Int
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   created_at DateTime      @default(now()) @db.Timestamp(0)
+  
 
   @@index([ticketId, created_at])
   @@map("comments")

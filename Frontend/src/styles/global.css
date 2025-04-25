@@ -3,3 +3,26 @@
 @tailwind utilities;
 
 /* Reglas globales personalizadas */
+@supports (backdrop-filter: blur(10px)) {
+    .backdrop-blur-lg {
+      backdrop-filter: blur(10px);
+    }
+  }
+  .dark {
+    --bg-light: #f3f4f6;
+    --bg-dark: #111827;
+    --text-light: #374151;
+    --text-dark: #e5e7eb;
+  }
+  [data-theme='indigo'] {
+    --primary-500: #4f46e5;
+    --primary-600: #4338ca;
+  }
+  [data-theme='emerald'] {
+    --primary-500: #059669;
+    --primary-600: #047857;
+  }
+  [data-theme='rose'] {
+    --primary-500: #e11d48;
+    --primary-600: #be123c;
+  }

@@ -86,3 +86,6 @@ The command above installs the Google Generative AI client because the version y
 
 ### `npm install react-markdown`
 The command above installs the React Markdown library because the version you installed is not compatible with the version of Create React App you are using.
+
+## Créditos
+- Ícono: [Ticket Icon by Flaticon](https://www.flaticon.com/free-icon/ticket_1007526)
