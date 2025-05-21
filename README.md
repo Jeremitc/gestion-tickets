@@ -21,7 +21,7 @@ Este proyecto fue desarrollado por un grupo de estudiantes, con una arquitectura
 El proyecto está dividido en dos aplicaciones completamente independientes:
 
 - **Frontend** → Desarrollado en **React Vanilla Puro**
-- **Backend** → Desarrollado en **Express.js**
+- **Backend** → Desarrollado en **Nest js**
 
 Ambas aplicaciones se comunican a través de una API REST.
 
